@@ -12,7 +12,6 @@ import java.util.List;
 public class User implements UserDetails {
 
     @Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
     @Column(name = "user_id")
     private Long id;
 
@@ -23,6 +22,9 @@ public class User implements UserDetails {
 
     @Column(name = "create_dt")
     private String createDt;
+
+    @Column(name = "updated_dt")
+    private String updatedDt;
 
     @Enumerated(value = EnumType.STRING)
     private Role role = Role.USER;
@@ -92,5 +94,13 @@ public class User implements UserDetails {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public String getUpdatedDt() {
+        return updatedDt;
+    }
+
+    public void setUpdatedDt(String updatedDt) {
+        this.updatedDt = updatedDt;
     }
 }
