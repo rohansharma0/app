@@ -38,6 +38,9 @@ public class UserServiceImpl implements UserService {
     public User updateUser(User user, String username) {
         User savedUser = this.userRepository.findByUsername(username).orElseThrow(() -> new ResourceNotFoundException("User" , "username" , username));
         savedUser.setUsername(user.getUsername());
+        savedUser.setEmail(user.getEmail());
+        savedUser.setFirstName(user.getFirstName());
+        savedUser.setLastName(user.getLastName());
         savedUser.setPassword(this.passwordEncoder.encode(user.getPassword()));
         savedUser.setUpdatedDt(String.valueOf(new Date(System.currentTimeMillis())));
         return this.userRepository.save(savedUser);
