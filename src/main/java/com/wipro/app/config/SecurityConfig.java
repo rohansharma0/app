@@ -1,17 +1,21 @@
 package com.wipro.app.config;
 
+import com.wipro.app.filter.CsrfCookieFilter;
 import com.wipro.app.filter.JWTTokenGeneratorFilter;
+import com.wipro.app.filter.JWTTokenValidatorFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
@@ -22,14 +26,31 @@ import java.util.List;
 @Configuration
 public class SecurityConfig {
 
+    private static final String[] PUBLIC_ROUTES = {
+            "/api/v1/auth/register"
+    };
+
+    private static final String[] PRIVATE_ROUTES = {
+            "/api/v1/user/**"
+    };
+
+    private static final String[] ALLOWED_ORIGINS = {
+            "http://localhost:4200",
+    };
+
+    private static final String LOGIN_ROUTE = "/api/v1/auth/login";
+
     @Bean
     SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
-        http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+        CsrfTokenRequestAttributeHandler requestAttributeHandler = new CsrfTokenRequestAttributeHandler();
+        requestAttributeHandler.setCsrfRequestAttributeName("_csrf");
+        http.securityContext((context) -> context.requireExplicitSave(false))
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.ALWAYS))
                         .cors(corsCustomizer -> corsCustomizer.configurationSource(new CorsConfigurationSource() {
                             @Override
                             public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
                                 CorsConfiguration config = new CorsConfiguration();
-                                config.setAllowedOrigins(Collections.singletonList("http://localhost:4200"));
+                                config.setAllowedOrigins(Arrays.asList(ALLOWED_ORIGINS));
                                 config.setAllowedMethods(Collections.singletonList("*"));
                                 config.setAllowCredentials(true);
                                 config.setAllowedHeaders(Collections.singletonList("*"));
@@ -38,12 +59,15 @@ public class SecurityConfig {
                                 return config;
                             }
                         }))
-                .csrf(AbstractHttpConfigurer::disable)
+                .csrf((csrf) -> csrf.csrfTokenRequestHandler(requestAttributeHandler).ignoringRequestMatchers(PUBLIC_ROUTES)
+                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
+                .addFilterAfter(new CsrfCookieFilter(), BasicAuthenticationFilter.class)
                 .addFilterAfter(new JWTTokenGeneratorFilter(), BasicAuthenticationFilter.class)
-//                .addFilterBefore(new JWTTokenValidatorFilter(), BasicAuthenticationFilter.class)
+                .addFilterBefore(new JWTTokenValidatorFilter(), BasicAuthenticationFilter.class)
                 .authorizeHttpRequests((requests) -> requests
-                        .requestMatchers("/api/v1/auth/login").authenticated()
-                        .requestMatchers("/**").permitAll())
+                        .requestMatchers(LOGIN_ROUTE).authenticated()
+                        .requestMatchers(PRIVATE_ROUTES).authenticated()
+                        .requestMatchers(PUBLIC_ROUTES).permitAll())
                         .formLogin(Customizer.withDefaults())
                         .httpBasic(Customizer.withDefaults());
         return http.build();

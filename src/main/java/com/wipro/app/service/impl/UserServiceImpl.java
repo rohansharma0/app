@@ -11,9 +11,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.ThreadLocalRandom;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -29,6 +29,7 @@ public class UserServiceImpl implements UserService {
         String hashPwd = passwordEncoder.encode(user.getPassword());
         user.setId(AppUtils.generateRandomUserId());
         user.setPassword(hashPwd);
+        user.setRole(Role.ROLE_USER);
         user.setCreateDt(String.valueOf(new Date(System.currentTimeMillis())));
         user.setUpdatedDt(String.valueOf(new Date(System.currentTimeMillis())));
         return this.userRepository.save(user);
@@ -37,11 +38,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public User updateUser(User user, String username) {
         User savedUser = this.userRepository.findByUsername(username).orElseThrow(() -> new ResourceNotFoundException("User" , "username" , username));
-        savedUser.setUsername(user.getUsername());
-        savedUser.setEmail(user.getEmail());
-        savedUser.setFirstName(user.getFirstName());
-        savedUser.setLastName(user.getLastName());
-        savedUser.setPassword(this.passwordEncoder.encode(user.getPassword()));
+        if(user.getUsername() != null) savedUser.setUsername(user.getUsername());
+        if(user.getEmail() != null) savedUser.setEmail(user.getEmail());
+        if(user.getFirstName() != null) savedUser.setFirstName(user.getFirstName());
+        if(user.getLastName() != null) savedUser.setLastName(user.getLastName());
         savedUser.setUpdatedDt(String.valueOf(new Date(System.currentTimeMillis())));
         return this.userRepository.save(savedUser);
     }
@@ -82,5 +82,13 @@ public class UserServiceImpl implements UserService {
         user.setPassword(this.passwordEncoder.encode(password));
         user.setUpdatedDt(String.valueOf(new Date(System.currentTimeMillis())));
         return this.userRepository.save(user);
+    }
+
+    @Override
+    public List<User> getUsersByUsername(String username) {
+        Optional<List<User>> allUsers = this.userRepository.findByUsernameContaining(username);
+        List<User> users = new ArrayList<>();
+        if(allUsers.isPresent()) users = allUsers.get();
+        return users;
     }
 }

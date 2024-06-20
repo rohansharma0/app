@@ -3,9 +3,7 @@ package com.wipro.app.config;
 import com.wipro.app.model.User;
 import com.wipro.app.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -36,10 +34,10 @@ public class AuthConfig implements AuthenticationProvider {
             if (passwordEncoder.matches(pwd, user.getPassword())) {
                 return new UsernamePasswordAuthenticationToken(username, pwd, getGrantedAuthorities(user.getAuthorities()));
             } else {
-                throw new BadCredentialsException("Invalid password!");
+                return new UsernamePasswordAuthenticationToken(username, pwd);
             }
         }else {
-            throw new BadCredentialsException("No user registered with this details!");
+            return new UsernamePasswordAuthenticationToken(username, pwd);
         }
     }
 

@@ -21,4 +21,6 @@ public interface UserService {
     User updateRole(String username , Role role);
 
     User updatePassword(String username , String password);
+
+    List<User> getUsersByUsername(String username);
 }

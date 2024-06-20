@@ -5,12 +5,14 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 @Entity
-public class User implements UserDetails {
-
+public class User implements UserDetails , Comparable<User>  {
     @Id
     @Column(name = "user_id")
     private Long id;
@@ -33,7 +35,7 @@ public class User implements UserDetails {
     private String updatedDt;
 
     @Enumerated(value = EnumType.STRING)
-    private Role role = Role.USER;
+    private Role role;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -132,5 +134,17 @@ public class User implements UserDetails {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    @Override
+    public int compareTo(User o) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        try {
+            Date d1 = dateFormat.parse(this.getUpdatedDt());
+            Date d2 = dateFormat.parse(o.getUpdatedDt());
+            return d1.compareTo(d2);
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

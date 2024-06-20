@@ -10,7 +10,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1/auth/")
+@RequestMapping("/api/v1/auth")
 public class AuthController {
 
     @Autowired
@@ -25,7 +25,6 @@ public class AuthController {
         return new ResponseEntity<>(createUser , HttpStatus.CREATED);
     }
 
-    //TODO: fix invalid password and username not found
     @GetMapping("/login")
     public ResponseEntity<?> login(Authentication authentication){
         if(this.userService.isUserExist(authentication.getName())){
