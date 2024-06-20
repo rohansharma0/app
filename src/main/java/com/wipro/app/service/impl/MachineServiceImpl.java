@@ -53,8 +53,8 @@ public class MachineServiceImpl implements MachineService {
     @Override
     public Machine addMachine(Machine machine) {
         AuditLog log = new AuditLog();
-        log.set
-        log.setUpdatedDt(String.valueOf(new Date(System.currentTimeMillis())));
+//        log.set
+//        log.setUpdatedDt(String.valueOf(new Date(System.currentTimeMillis())));
         this.auditLogService.createLog(log);
         return this.machineRepository.save(machine);
     }
