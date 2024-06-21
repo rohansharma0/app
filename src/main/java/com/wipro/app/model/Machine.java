@@ -15,7 +15,7 @@ public class Machine {
 
     private String deviceId;
 
-    @Enumerated(EnumType.ORDINAL)
+    @Enumerated(EnumType.STRING)
     private MachineType machineType;
 
     private String simNo;

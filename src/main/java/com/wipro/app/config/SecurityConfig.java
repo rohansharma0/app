@@ -27,11 +27,13 @@ import java.util.List;
 public class SecurityConfig {
 
     private static final String[] PUBLIC_ROUTES = {
-            "/api/v1/auth/register"
+            "/api/v1/auth/register",
     };
 
     private static final String[] PRIVATE_ROUTES = {
-            "/api/v1/user/**"
+            "/api/v1/user/**",
+            "/api/v1/machine/**",
+            "/api/v1/log/**",
     };
 
     private static final String[] ALLOWED_ORIGINS = {

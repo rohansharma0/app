@@ -34,7 +34,7 @@ public class User implements UserDetails , Comparable<User>  {
     @Column(name = "updated_dt")
     private String updatedDt;
 
-    @Enumerated(value = EnumType.STRING)
+    @Enumerated(value = EnumType.ORDINAL)
     private Role role;
 
     @Override

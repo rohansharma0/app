@@ -2,6 +2,8 @@ package com.wipro.app.model;
 
 import jakarta.persistence.*;
 
+import java.sql.Timestamp;
+
 @Entity
 public class AuditLog {
 
@@ -9,51 +11,65 @@ public class AuditLog {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "machine_id")
     private Machine machine;
 
-    private String field;
+    private String serialNumber;
 
-    private String previousValue;
+    private String deviceId;
 
-    private String currentValue;
+    @Enumerated(EnumType.STRING)
+    private MachineType machineType;
 
-    private String userId;
+    private String simNo;
 
-    @Column(name = "updated_dt")
-    private String updatedDt;
+    private String country;
 
-    public String getUserId() {
-        return userId;
+    private String city;
+
+    private Timestamp changedAt;
+
+    private String changedBy;
+
+    public Timestamp getChangedAt() {
+        return changedAt;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
+    public void setChangedAt(Timestamp changedAt) {
+        this.changedAt = changedAt;
     }
 
-    public String getUpdatedDt() {
-        return updatedDt;
+    public String getChangedBy() {
+        return changedBy;
     }
 
-    public void setUpdatedDt(String updatedDt) {
-        this.updatedDt = updatedDt;
+    public void setChangedBy(String changedBy) {
+        this.changedBy = changedBy;
     }
 
-    public String getPreviousValue() {
-        return previousValue;
+    public String getCity() {
+        return city;
     }
 
-    public void setPreviousValue(String previousValue) {
-        this.previousValue = previousValue;
+    public void setCity(String city) {
+        this.city = city;
     }
 
-    public Machine getMachine() {
-        return machine;
+    public String getCountry() {
+        return country;
     }
 
-    public void setMachine(Machine machine) {
-        this.machine = machine;
+    public void setCountry(String country) {
+        this.country = country;
+    }
+
+    public String getDeviceId() {
+        return deviceId;
+    }
+
+    public void setDeviceId(String deviceId) {
+        this.deviceId = deviceId;
     }
 
     public Long getId() {
@@ -64,19 +80,35 @@ public class AuditLog {
         this.id = id;
     }
 
-    public String getField() {
-        return field;
+    public Machine getMachine() {
+        return machine;
     }
 
-    public void setField(String field) {
-        this.field = field;
+    public void setMachine(Machine machine) {
+        this.machine = machine;
     }
 
-    public String getCurrentValue() {
-        return currentValue;
+    public MachineType getMachineType() {
+        return machineType;
     }
 
-    public void setCurrentValue(String currentValue) {
-        this.currentValue = currentValue;
+    public void setMachineType(MachineType machineType) {
+        this.machineType = machineType;
+    }
+
+    public String getSerialNumber() {
+        return serialNumber;
+    }
+
+    public void setSerialNumber(String serialNumber) {
+        this.serialNumber = serialNumber;
+    }
+
+    public String getSimNo() {
+        return simNo;
+    }
+
+    public void setSimNo(String simNo) {
+        this.simNo = simNo;
     }
 }

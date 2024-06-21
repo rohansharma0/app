@@ -32,7 +32,7 @@ public class MachineServiceImpl implements MachineService {
     }
 
     @Override
-    public Machine updateMachineById(Machine machine, Long id) {
+    public Machine updateMachineById(Machine machine, Long id , String username) {
         Machine savedMachine = this.machineRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Machine" , "machineId" , id.toString()));
         if(null!=machine.getMachineType()) savedMachine.setMachineType(machine.getMachineType());
         if(null!=machine.getCity())   savedMachine.setCity(machine.getCity());
@@ -40,22 +40,20 @@ public class MachineServiceImpl implements MachineService {
         if(null!=machine.getDeviceId()) savedMachine.setDeviceId(machine.getDeviceId());
         if(null!=machine.getSerialNumber()) savedMachine.setSerialNumber(machine.getSerialNumber());
         if(null!=machine.getSimNo()) savedMachine.setSimNo(machine.getSimNo());
-        //log
+        this.auditLogService.createLog(savedMachine , username);
         return this.machineRepository.save(savedMachine);
     }
 
     @Override
-    public void deleteMachineById(Long machineId) {
+    public void deleteMachineById(Long machineId , String username) {
         Machine machine = this.machineRepository.findById(machineId).orElseThrow(() -> new ResourceNotFoundException("Machine" , "machineId" , machineId.toString()));
+        this.auditLogService.createLog(machine , username);
         this.machineRepository.delete(machine);
     }
 
     @Override
-    public Machine addMachine(Machine machine) {
-        AuditLog log = new AuditLog();
-//        log.set
-//        log.setUpdatedDt(String.valueOf(new Date(System.currentTimeMillis())));
-        this.auditLogService.createLog(log);
+    public Machine addMachine(Machine machine , String username) {
+        this.auditLogService.createLog(machine , username);
         return this.machineRepository.save(machine);
     }
 }

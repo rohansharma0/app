@@ -10,9 +10,9 @@ public interface MachineService {
 
     Machine getMachineById(Long machineId);
 
-    Machine updateMachineById(Machine machine,Long machineId);
+    Machine updateMachineById(Machine machine,Long machineId , String username);
 
-    void deleteMachineById(Long machineId);
+    void deleteMachineById(Long machineId , String username);
 
-    Machine addMachine(Machine machine);
+    Machine addMachine(Machine machine, String username);
 }
