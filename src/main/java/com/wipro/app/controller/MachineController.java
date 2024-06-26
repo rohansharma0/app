@@ -25,14 +25,12 @@ public class MachineController {
     }
 
     @PutMapping("/machine/{machineId}")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Machine> updateMachine(@RequestBody Machine machine , @PathVariable Long machineId , Principal principal){
         Machine updateMachine = this.machineService.updateMachineById(machine,machineId,principal.getName());
         return new ResponseEntity<>(updateMachine , HttpStatus.OK);
     }
 
     @DeleteMapping("/machine/{machineId}")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse> deleteMachine(@PathVariable Long machineId ,Principal principal){
         this.machineService.deleteMachineById(machineId,principal.getName());
         return new ResponseEntity<>(new ApiResponse("Machine deleted successfully" , true , 200) , HttpStatus.OK);
